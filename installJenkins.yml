@@ -1,0 +1,33 @@
+---
+- hosts: My_Group
+  tasks:
+    - name: ensure the Jenkins apt repository key is installed
+      apt_key: url=https://pkg.jenkins.io/debian/jenkins.io-2023.key state=present
+      become: yes
+
+    - name: ensure the repository is configured
+      apt_repository: repo='deb https://pkg.jenkins.io/debian-stable binary/' state=present
+      become: yes
+
+    - name: ensure Jenkins is installed
+      apt: name=jenkins update_cache=yes
+      become: yes
+
+    - name: ensure Jenkins is running
+      service: name=jenkins state=started
+
+    - name: fetch Jenkins admin password
+      fetch:
+        src: /var/lib/jenkins/secrets/initialAdminPassword
+        dest: /tmp/initialAdminPassword
+        flat: yes
+      become: yes
+
+    - name: display Jenkins admin password
+      shell: cat /tmp/initialAdminPassword
+      register: admin_password_output
+      become: yes
+
+    - name: display the admin password
+      debug:
+        var: admin_password_output.stdout
