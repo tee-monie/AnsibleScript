@@ -1,0 +1,20 @@
+---
+- hosts: My_Group
+  tasks:
+    - name: Install Maven using Ansible
+      become: yes
+      apt:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+           - maven
+
+    - name: Check Maven version
+      command: mvn --version
+      register: maven_version_output
+      become: yes
+
+    - name: Display Maven version
+      debug:
+        var: maven_version_output.stdout_lines
