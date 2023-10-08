@@ -1,0 +1,19 @@
+---
+ - name: ec2 provisioning using Ansible
+   hosts: "input-ec2 ip"
+   connection: "input-ec2 ip"
+   gather_facts: False
+
+ - hosts: "input-ec2 ip"
+   gather_facts: False
+   connection: "input-ec2 ip"
+   vars:
+     - region: 'us-east-1'
+     - ec2_id: 'i-0040dc679ebf45878'
+   tasks:
+     - name: Terminate instances
+       local_action: ec2
+         state='absent'
+         instance_ids='{{ ec2_id }}'
+         region='{{ region }}'
+         wait=True
